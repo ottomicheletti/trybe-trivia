@@ -9,6 +9,7 @@ export default function App() {
         <img src={ logo } className="App-logo" alt="logo" />
         <p>
           GRUPO 22
+          {/* PR */}
         </p>
       </header>
     </div>
