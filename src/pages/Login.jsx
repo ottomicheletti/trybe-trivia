@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 // import { useDispatch } from 'react-redux';
 
-const Login = (props) => {
+const Login = () => {
   const [email, setEmail] = useState(null);
-  const [name, setName] = useState(null);
+  const [username, setUsername] = useState(null);
   const [btnDisabled, setBtnDisabled] = useState(true);
 
   const validateInputs = () => {
     const emailRegex = /\S+@\S+\.\S+/;
-    return emailRegex.test(email) && name !== null ? setBtnDisabled(false) : setBtnDisabled(true);
-  }
+    return emailRegex.test(email) && username !== null
+      ? setBtnDisabled(false)
+      : setBtnDisabled(true);
+  };
 
-  const handleChange = ({target: { value, name }}) => name === 'email'
-    ? (setEmail(value), validateInputs())
-    : (setName(value), validateInputs());
+  const handleChange = ({ target: { value, name } }) => (
+    name === 'email'
+      ? (setEmail(value), validateInputs())
+      : (setUsername(value), validateInputs()));
 
   return (
     <div>
@@ -39,6 +42,7 @@ const Login = (props) => {
           />
         </label>
         <button
+          type="button"
           data-testid="btn-play"
           disabled={ btnDisabled }
           // onClick={}
@@ -47,7 +51,7 @@ const Login = (props) => {
         </button>
       </form>
     </div>
-  )
-}
+  );
+};
 
 export default Login;

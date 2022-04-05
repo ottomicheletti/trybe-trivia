@@ -4,7 +4,7 @@ import './App.css';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import store from './store';
-import Login from './pages/Login'
+import Login from './pages/Login';
 
 export default function App() {
   return (
