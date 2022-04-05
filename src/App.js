@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import store from './store';
 import Login from './pages/Login';
+import Jogo from './pages/Jogo';
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
       <BrowserRouter>
         <Switch>
           <Route exact path="/" component={ Login } />
+          <Route exact path="/jogo" component={ Jogo } />
         </Switch>
       </BrowserRouter>
     </Provider>
