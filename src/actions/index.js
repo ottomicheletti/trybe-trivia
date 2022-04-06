@@ -9,3 +9,7 @@ export const saveUser = (payload) => ({ type: SAVE_USER, payload });
 export const SAVE_TOKEN = 'SAVE_TOKEN';
 
 export const saveToken = (payload) => ({ type: SAVE_TOKEN, payload });
+
+export const SAVE_GRAVATAR = 'SAVE_GRAVATAR';
+
+export const saveGravatar = (payload) => ({ type: SAVE_GRAVATAR, payload });

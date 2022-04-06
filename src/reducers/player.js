@@ -3,7 +3,7 @@ import { SAVE_EMAIL, SAVE_USER } from '../actions';
 const INITIAL_STATE = {
   name: null,
   assertions: null,
-  score: null,
+  score: 0,
   gravatarEmail: null,
 };
 
