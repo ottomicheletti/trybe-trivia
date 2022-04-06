@@ -13,3 +13,7 @@ export const saveToken = (payload) => ({ type: SAVE_TOKEN, payload });
 export const SAVE_GRAVATAR = 'SAVE_GRAVATAR';
 
 export const saveGravatar = (payload) => ({ type: SAVE_GRAVATAR, payload });
+
+export const SAVE_TRIVIA = 'SAVE_TRIVIA';
+
+export const saveTrivia = (payload) => ({ type: SAVE_TRIVIA, payload });
