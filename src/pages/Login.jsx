@@ -25,6 +25,7 @@ const Login = (props) => {
   const fetchToken = async () => {
     const response = await fetch('https://opentdb.com/api_token.php?command=request');
     const { token } = await response.json();
+    localStorage.setItem('token', JSON.stringify(token));
     dispatch(saveToken(token));
   };
 
@@ -68,6 +69,14 @@ const Login = (props) => {
           onClick={ handleClick }
         >
           Play
+        </button>
+        <button
+          type="button"
+          data-testid="btn-settings"
+          // disabled={ btnDisabled }
+          onClick={ () => props.history.push('/configuracao') }
+        >
+          Configurações
         </button>
       </form>
     </div>
