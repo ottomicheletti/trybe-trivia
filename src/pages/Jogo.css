@@ -15,8 +15,8 @@
   flex-direction: column;
 }
 
-button {
-  border: 3px solid rgb(105, 105, 105);
+.answer-buttons-null {
+  border: 3px solid dimgray;
   border-radius: 3px;
   height: 40px;
   margin: 0.5em 0;
@@ -28,8 +28,14 @@ button {
 
 .answer-buttons-correct {
   border: 3px solid rgb(6, 240, 15);
+  border-radius: 3px;
+  height: 40px;
+  margin: 0.5em 0;
 }
 
 .answer-buttons-wrong {
-  border: 3px solid rgb(255, 0, 0);
+  border: 3px solid red;
+  border-radius: 3px;
+  height: 40px;
+  margin: 0.5em 0;
 }
