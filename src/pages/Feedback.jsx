@@ -7,9 +7,18 @@ const Feedback = (props) => {
   return (
     <div data-testid="feedback-text">
       <Header />
-      <button type="button" data-testid="btn-play-again" onClick={ () => push('/') }>
-        Play Again
-      </button>
+      <div>
+        <button type="button" data-testid="btn-play-again" onClick={ () => push('/') }>
+          Play Again
+        </button>
+        <button
+          type="button"
+          data-testid="btn-ranking"
+          onClick={ () => push('/ranking') }
+        >
+          Ranking
+        </button>
+      </div>
     </div>
   );
 };
