@@ -4,6 +4,13 @@ import PropTypes from 'prop-types';
 import { saveScore, saveToken } from '../actions';
 import Header from './components/Header';
 import './Jogo.css';
+import handleClassName from '../helpers/index';
+
+const dificuldade = {
+  easy: 1,
+  medium: 2,
+  hard: 3,
+};
 
 const Jogo = (props) => {
   const dispatch = useDispatch();
@@ -144,35 +151,6 @@ const Jogo = (props) => {
     calculateScore(value, id);
   };
 
-  const handleClassName = (answer) => {
-    switch (true) {
-    case hasClickedAnAnswer && answer === correctAnswer:
-      return 'correct';
-    case hasClickedAnAnswer && answer !== correctAnswer:
-      return 'wrong';
-    default:
-      return null;
-    }
-  };
-
-  const calculateValue = (parametro) => {
-    let difficultyValue;
-    const TRES = 3;
-    const DOIS = 2;
-
-    switch (parametro) {
-    case 'medium':
-      difficultyValue = DOIS;
-      break;
-    case 'hard':
-      difficultyValue = TRES;
-      break;
-    default:
-      difficultyValue = 1;
-    }
-    return difficultyValue;
-  };
-
   useEffect(() => {
     generateRandomAnswers();
   }, [correctAnswer, triviaIndex]);
@@ -201,14 +179,18 @@ const Jogo = (props) => {
                 <button
                   key={ index }
                   type="button"
-                  value={ calculateValue(difficulty) }
+                  value={ dificuldade[difficulty] }
                   id={ answer }
                   data-testid={
                     answer === correctAnswer
                       ? 'correct-answer'
                       : `wrong-answer-${incorrectAnswers.indexOf(answer)}`
                   }
-                  className={ `answer-buttons-${handleClassName(answer)}` }
+                  className={ `answer-buttons-${handleClassName(
+                    answer,
+                    hasClickedAnAnswer,
+                    correctAnswer,
+                  )}` }
                   disabled={ hasClickedAnAnswer }
                   onClick={ handleAnswerClick }
                 >
