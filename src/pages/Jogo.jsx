@@ -44,14 +44,14 @@ const Jogo = (props) => {
 
   const fetchTrivia = async () => {
     const response1 = await fetch(
-      `https://opentdb.com/api.php?amount=5&token=${JSON.parse(localToken)}`
+      `https://opentdb.com/api.php?amount=5&token=${JSON.parse(localToken)}`,
     );
     const json = await response1.json();
     console.log(`Response code: ${json.response_code}`);
     if (json.response_code !== 0) {
       fetchToken();
       const response2 = await fetch(
-        `https://opentdb.com/api.php?amount=5&token=${JSON.parse(localToken)}`
+        `https://opentdb.com/api.php?amount=5&token=${JSON.parse(localToken)}`,
       );
       const { results } = await response2.json();
       setLocalState((prevState) => ({
@@ -96,37 +96,37 @@ const Jogo = (props) => {
     const QUATRO = 4;
 
     switch (true) {
-      case triviaIndex < QUATRO:
-        return setLocalState((prevState) => ({
-          ...prevState,
-          triviaIndex: triviaIndex + 1,
-          category: trivia[triviaIndex + 1].category,
-          difficulty: trivia[triviaIndex + 1].difficulty,
-          question: trivia[triviaIndex + 1].question,
-          correctAnswer: trivia[triviaIndex + 1].correct_answer,
-          incorrectAnswers: trivia[triviaIndex + 1].incorrect_answers,
-          hasClickedAnAnswer: false,
-          timer: 30,
-        }));
-      case triviaIndex === QUATRO:
-        return push('./feedback');
-      default:
-        break;
+    case triviaIndex < QUATRO:
+      return setLocalState((prevState) => ({
+        ...prevState,
+        triviaIndex: triviaIndex + 1,
+        category: trivia[triviaIndex + 1].category,
+        difficulty: trivia[triviaIndex + 1].difficulty,
+        question: trivia[triviaIndex + 1].question,
+        correctAnswer: trivia[triviaIndex + 1].correct_answer,
+        incorrectAnswers: trivia[triviaIndex + 1].incorrect_answers,
+        hasClickedAnAnswer: false,
+        timer: 30,
+      }));
+    case triviaIndex === QUATRO:
+      return push('./feedback');
+    default:
+      break;
     }
   };
 
   const countdown = () => {
     switch (true) {
-      case !hasClickedAnAnswer && timer > 0:
-        return setLocalState((prevState) => ({ ...prevState, timer: timer - 1 }));
-      case timer === 0:
-        return setLocalState((prevState) => ({
-          ...prevState,
-          timer: 0,
-          hasClickedAnAnswer: true,
-        }));
-      default:
-        break;
+    case !hasClickedAnAnswer && timer > 0:
+      return setLocalState((prevState) => ({ ...prevState, timer: timer - 1 }));
+    case timer === 0:
+      return setLocalState((prevState) => ({
+        ...prevState,
+        timer: 0,
+        hasClickedAnAnswer: true,
+      }));
+    default:
+      break;
     }
   };
 
@@ -145,10 +145,14 @@ const Jogo = (props) => {
   };
 
   const handleClassName = (answer) => {
-    if (hasClickedAnAnswer) {
-      return answer === correctAnswer ? 'correct' : 'wrong';
+    switch (true) {
+    case hasClickedAnAnswer && answer === correctAnswer:
+      return 'correct';
+    case hasClickedAnAnswer && answer !== correctAnswer:
+      return 'wrong';
+    default:
+      return null;
     }
-    return null;
   };
 
   const calculateValue = (parametro) => {
@@ -157,14 +161,14 @@ const Jogo = (props) => {
     const DOIS = 2;
 
     switch (parametro) {
-      case 'medium':
-        difficultyValue = DOIS;
-        break;
-      case 'hard':
-        difficultyValue = TRES;
-        break;
-      default:
-        difficultyValue = 1;
+    case 'medium':
+      difficultyValue = DOIS;
+      break;
+    case 'hard':
+      difficultyValue = TRES;
+      break;
+    default:
+      difficultyValue = 1;
     }
     return difficultyValue;
   };
@@ -185,28 +189,28 @@ const Jogo = (props) => {
   return (
     <div>
       <Header />
-      <div className='trivia-body'>
+      <div className="trivia-body">
         {loading ? (
           <p>CARREGANDO...</p>
         ) : (
-          <div className='trivia-container'>
-            <h3 data-testid='question-category'>{category}</h3>
-            <h3 data-testid='question-text'>{question}</h3>
-            <div data-testid='answer-options' className='answer-options'>
+          <div className="trivia-container">
+            <h3 data-testid="question-category">{category}</h3>
+            <h3 data-testid="question-text">{question}</h3>
+            <div data-testid="answer-options" className="answer-options">
               {randomAnswers.map((answer, index) => (
                 <button
-                  key={index}
-                  type='button'
-                  value={calculateValue(difficulty)}
-                  id={answer}
+                  key={ index }
+                  type="button"
+                  value={ calculateValue(difficulty) }
+                  id={ answer }
                   data-testid={
                     answer === correctAnswer
                       ? 'correct-answer'
                       : `wrong-answer-${incorrectAnswers.indexOf(answer)}`
                   }
-                  className={`answer-buttons-${handleClassName(answer)}`}
-                  disabled={hasClickedAnAnswer}
-                  onClick={handleAnswerClick}
+                  className={ `answer-buttons-${handleClassName(answer)}` }
+                  disabled={ hasClickedAnAnswer }
+                  onClick={ handleAnswerClick }
                 >
                   {answer}
                 </button>
@@ -216,11 +220,11 @@ const Jogo = (props) => {
           </div>
         )}
         <button
-          className='next-trivia-btn'
-          data-testid='btn-next'
-          type='button'
-          hidden={!hasClickedAnAnswer}
-          onClick={nextTrivia}
+          className="next-trivia-btn"
+          data-testid="btn-next"
+          type="button"
+          hidden={ !hasClickedAnAnswer }
+          onClick={ nextTrivia }
         >
           Next
         </button>
