@@ -7,6 +7,7 @@ import store from './store';
 import Login from './pages/Login';
 import Jogo from './pages/Jogo';
 import Configuracao from './pages/Configuracao';
+import Feedback from './pages/Feedback';
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
           <Route exact path="/" component={ Login } />
           <Route exact path="/jogo" component={ Jogo } />
           <Route exact path="/configuracao" component={ Configuracao } />
+          <Route exact path="/feedback" component={ Feedback } />
         </Switch>
       </BrowserRouter>
     </Provider>

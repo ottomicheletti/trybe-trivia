@@ -1,47 +1,38 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-  // saveScore,
-  saveToken,
-} from '../actions';
-import Header from './components/header';
+import PropTypes from 'prop-types';
+import { saveScore, saveToken } from '../actions';
+import Header from './components/Header';
 import './Jogo.css';
 
-const Jogo = () => {
+const Jogo = (props) => {
   const dispatch = useDispatch();
-
-  // TOKEN ARMAZENADO NO LOCAL STORAGE
   const localToken = localStorage.getItem('token');
-
-  // ESTADO LOCAL INICIAL
   const [localState, setLocalState] = useState({
     loading: true,
     trivia: [],
     triviaIndex: 0,
     category: null,
-    // type: null,
-    // difficulty: null,
+    difficulty: null,
     question: null,
     correctAnswer: null,
     incorrectAnswers: [],
     randomAnswers: [],
     hasClickedAnAnswer: false,
-    score: 0,
+    timer: 30,
   });
-
-  // DESCONSTROI ESTADO LOCAL PARA VARIÁVEIS
   const {
     loading,
     trivia,
     triviaIndex,
     category,
-    // type,
-    // difficulty,
+    difficulty,
     question,
     correctAnswer,
     incorrectAnswers,
     randomAnswers,
     hasClickedAnAnswer,
+    timer,
   } = localState;
 
   const fetchToken = async () => {
@@ -53,14 +44,14 @@ const Jogo = () => {
 
   const fetchTrivia = async () => {
     const response1 = await fetch(
-      `https://opentdb.com/api.php?amount=5&token=${JSON.parse(localToken)}`,
+      `https://opentdb.com/api.php?amount=5&token=${JSON.parse(localToken)}`
     );
     const json = await response1.json();
     console.log(`Response code: ${json.response_code}`);
     if (json.response_code !== 0) {
       fetchToken();
       const response2 = await fetch(
-        `https://opentdb.com/api.php?amount=5&token=${JSON.parse(localToken)}`,
+        `https://opentdb.com/api.php?amount=5&token=${JSON.parse(localToken)}`
       );
       const { results } = await response2.json();
       setLocalState((prevState) => ({
@@ -68,8 +59,7 @@ const Jogo = () => {
         loading: false,
         trivia: results,
         category: results[triviaIndex].category,
-        // type: results[triviaIndex].type,
-        // difficulty: results[triviaIndex].difficulty,
+        difficulty: results[triviaIndex].difficulty,
         question: results[triviaIndex].question,
         correctAnswer: results[triviaIndex].correct_answer,
         incorrectAnswers: results[triviaIndex].incorrect_answers,
@@ -80,8 +70,7 @@ const Jogo = () => {
         loading: false,
         trivia: json.results,
         category: json.results[triviaIndex].category,
-        // type: results[triviaIndex].type,
-        // difficulty: json.results[triviaIndex].difficulty,
+        difficulty: json.results[triviaIndex].difficulty,
         question: json.results[triviaIndex].question,
         correctAnswer: json.results[triviaIndex].correct_answer,
         incorrectAnswers: json.results[triviaIndex].incorrect_answers,
@@ -89,46 +78,72 @@ const Jogo = () => {
     }
   };
 
-  // FUNÇÃO PARA EMBARALHAR AS RESPOSTAS DA TRIVIA
   const generateRandomAnswers = () => {
     const randomIndex = Math.floor(Math.random() * trivia.length);
     console.log(`Random Index: ${randomIndex}`);
     const RANDOM_ANSWERS = [...incorrectAnswers];
     RANDOM_ANSWERS.splice(randomIndex, 0, correctAnswer);
-
     setLocalState((prevState) => ({
       ...prevState,
       randomAnswers: RANDOM_ANSWERS,
     }));
   };
 
-  // FUNÇÃO QUE SERÁ IMPLEMENTADA NO BOTÃO NEXT NUM PRÓXIMO REQUISITO
   const nextTrivia = () => {
-    if (triviaIndex < trivia.length - 1) {
-      setLocalState((prevState) => ({
-        ...prevState,
-        triviaIndex: triviaIndex + 1,
-        category: trivia[triviaIndex + 1].category,
-        // type: trivia[triviaIndex + 1].type,
-        question: trivia[triviaIndex + 1].question,
-        correctAnswer: trivia[triviaIndex + 1].correct_answer,
-        incorrectAnswers: trivia[triviaIndex + 1].incorrect_answers,
-        hasClickedAnAnswer: false,
-      }));
+    const {
+      history: { push },
+    } = props;
+    const QUATRO = 4;
+
+    switch (true) {
+      case triviaIndex < QUATRO:
+        return setLocalState((prevState) => ({
+          ...prevState,
+          triviaIndex: triviaIndex + 1,
+          category: trivia[triviaIndex + 1].category,
+          difficulty: trivia[triviaIndex + 1].difficulty,
+          question: trivia[triviaIndex + 1].question,
+          correctAnswer: trivia[triviaIndex + 1].correct_answer,
+          incorrectAnswers: trivia[triviaIndex + 1].incorrect_answers,
+          hasClickedAnAnswer: false,
+          timer: 30,
+        }));
+      case triviaIndex === QUATRO:
+        return push('./feedback');
+      default:
+        break;
     }
   };
 
-  // FUNÇÃO PARA VERIFICAR QUANDO ALGUMA RESPOSTA DA TRIVIA É CLICADA
-  const handleAnswerClick = () => {
+  const countdown = () => {
+    switch (true) {
+      case !hasClickedAnAnswer && timer > 0:
+        return setLocalState((prevState) => ({ ...prevState, timer: timer - 1 }));
+      case timer === 0:
+        return setLocalState((prevState) => ({
+          ...prevState,
+          timer: 0,
+          hasClickedAnAnswer: true,
+        }));
+      default:
+        break;
+    }
+  };
+
+  const calculateScore = (value, id) => {
+    const DEZ = 10;
+    return id === correctAnswer && dispatch(saveScore(DEZ + timer * value));
+  };
+
+  const handleAnswerClick = ({ target: { value, id } }) => {
+    clearInterval(countdown);
     setLocalState((prevState) => ({
       ...prevState,
       hasClickedAnAnswer: true,
     }));
-    // implementar lógica do SCORE { target: { value }} e comparar com correctAnswer
-    // calcular a dificuldade e o tempo!
+    calculateScore(value, id);
   };
 
-  // FUNÇÃO PARA GERENCIAR OS NOMES DE CLASS DO CSS - REQUISITO 6 e 7
   const handleClassName = (answer) => {
     if (hasClickedAnAnswer) {
       return answer === correctAnswer ? 'correct' : 'wrong';
@@ -136,55 +151,88 @@ const Jogo = () => {
     return null;
   };
 
-  // CHAMA A FUNÇÃO generateRandomAnswers() TODA VEZ QUE HÁ UMA ATUALIZAÇÃO NOS ESTADOS correctAnswer e triviaIndex ( substitui o componentShouldUpdate() )
+  const calculateValue = (parametro) => {
+    let difficultyValue;
+    const TRES = 3;
+    const DOIS = 2;
+
+    switch (parametro) {
+      case 'medium':
+        difficultyValue = DOIS;
+        break;
+      case 'hard':
+        difficultyValue = TRES;
+        break;
+      default:
+        difficultyValue = 1;
+    }
+    return difficultyValue;
+  };
+
   useEffect(() => {
     generateRandomAnswers();
   }, [correctAnswer, triviaIndex]);
 
-  // CHAMA A FUNÇÃO fetchTrivia() TODA VEZ QUE A PÁGINA Jogo.jsx É CARREGADA ( substitui o componentDidMount() )
   useEffect(() => {
     fetchTrivia();
   }, []);
 
+  const MIL = 1000;
+  useEffect(() => {
+    setTimeout(countdown, MIL);
+  }, [timer]);
+
   return (
     <div>
       <Header />
-      <div className="trivia-body">
+      <div className='trivia-body'>
         {loading ? (
           <p>CARREGANDO...</p>
         ) : (
-          <div className="trivia-container">
-            <h3 data-testid="question-category">{category}</h3>
-            <h3 data-testid="question-text">{question}</h3>
-            <div data-testid="answer-options" className="answer-options">
+          <div className='trivia-container'>
+            <h3 data-testid='question-category'>{category}</h3>
+            <h3 data-testid='question-text'>{question}</h3>
+            <div data-testid='answer-options' className='answer-options'>
               {randomAnswers.map((answer, index) => (
                 <button
-                  key={ index }
-                  type="button"
-                  value={ answer }
-                  // ARRUMA O data-testid DINAMICAMENTE - REQUISITO 5
+                  key={index}
+                  type='button'
+                  value={calculateValue(difficulty)}
+                  id={answer}
                   data-testid={
                     answer === correctAnswer
                       ? 'correct-answer'
                       : `wrong-answer-${incorrectAnswers.indexOf(answer)}`
                   }
-                  className={ `answer-buttons-${handleClassName(answer)}` }
-                  // SE ALGUMA RESPOSA FOR CLICADA, O ESTADO VIRA TRUE, FAZENDO COM QUE APENAS UMA RESPOSTA POSSA SER ESCOLHIDA - REQUISITO 6
-                  disabled={ hasClickedAnAnswer }
-                  onClick={ handleAnswerClick }
+                  className={`answer-buttons-${handleClassName(answer)}`}
+                  disabled={hasClickedAnAnswer}
+                  onClick={handleAnswerClick}
                 >
                   {answer}
                 </button>
               ))}
+              <p>{timer}</p>
             </div>
           </div>
         )}
-        <button className="next-trivia-btn" type="button" onClick={ nextTrivia }>
+        <button
+          className='next-trivia-btn'
+          data-testid='btn-next'
+          type='button'
+          hidden={!hasClickedAnAnswer}
+          onClick={nextTrivia}
+        >
           Next
         </button>
       </div>
     </div>
   );
 };
+
+Jogo.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }),
+}.isRequired;
 
 export default Jogo;
