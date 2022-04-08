@@ -7,13 +7,13 @@ const Header = () => {
   return (
     <header>
       <img
-        data-testid='header-profile-picture'
-        src={`https://www.gravatar.com/avatar/${gravatarEmail}`}
-        alt={name}
+        data-testid="header-profile-picture"
+        src={ `https://www.gravatar.com/avatar/${gravatarEmail}` }
+        alt={ name }
       />
       <div>
-        <p data-testid='header-player-name'>{name}</p>
-        <p data-testid='header-score'>{score}</p>
+        <p data-testid="header-player-name">{name}</p>
+        <p data-testid="header-score">{score}</p>
       </div>
     </header>
   );
