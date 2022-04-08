@@ -1,8 +1,8 @@
-import { SAVE_EMAIL, SAVE_USER, SAVE_SCORE } from '../actions';
+import { SAVE_EMAIL, SAVE_USER, SAVE_SCORE, SAVE_ASSERTIONS } from '../actions';
 
 const INITIAL_STATE = {
   name: null,
-  assertions: null,
+  assertions: 0,
   score: 0,
   gravatarEmail: null,
 };
@@ -22,7 +22,12 @@ const player = (state = INITIAL_STATE, action) => {
   case SAVE_SCORE:
     return {
       ...state,
-      score: state.score + action.payload,
+      score: action.payload,
+    };
+  case SAVE_ASSERTIONS:
+    return {
+      ...state,
+      assertions: action.payload,
     };
   default:
     return state;

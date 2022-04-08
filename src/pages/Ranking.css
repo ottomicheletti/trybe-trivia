@@ -1,0 +1,15 @@
+.pessoa-card {
+  border: 1px solid black;
+  display: flex;
+  height: 100px;
+  margin: 0.5em auto;
+  width: 300px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.btn-go-home {
+  text-align: center;
+}

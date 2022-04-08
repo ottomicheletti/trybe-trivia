@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { saveScore, saveToken } from '../actions';
+import { saveScore, saveToken, saveAssertions } from '../actions';
 import Header from './components/Header';
 import './Jogo.css';
 import handleClassName from '../helpers/index';
@@ -27,6 +27,8 @@ const Jogo = (props) => {
     randomAnswers: [],
     hasClickedAnAnswer: false,
     timer: 30,
+    score: 0,
+    assertions: 0,
   });
   const {
     loading,
@@ -40,7 +42,12 @@ const Jogo = (props) => {
     randomAnswers,
     hasClickedAnAnswer,
     timer,
+    score,
+    assertions,
   } = localState;
+  const QUATRO = 4;
+  const DEZ = 10;
+  const MIL = 1000;
 
   const fetchToken = async () => {
     const response = await fetch('https://opentdb.com/api_token.php?command=request');
@@ -86,7 +93,7 @@ const Jogo = (props) => {
   };
 
   const generateRandomAnswers = () => {
-    const randomIndex = Math.floor(Math.random() * trivia.length);
+    const randomIndex = Math.floor(Math.random() * trivia.length - 1);
     console.log(`Random Index: ${randomIndex}`);
     const RANDOM_ANSWERS = [...incorrectAnswers];
     RANDOM_ANSWERS.splice(randomIndex, 0, correctAnswer);
@@ -100,7 +107,6 @@ const Jogo = (props) => {
     const {
       history: { push },
     } = props;
-    const QUATRO = 4;
 
     switch (true) {
     case triviaIndex < QUATRO:
@@ -137,19 +143,26 @@ const Jogo = (props) => {
     }
   };
 
-  const calculateScore = (value, id) => {
-    const DEZ = 10;
-    return id === correctAnswer && dispatch(saveScore(DEZ + timer * value));
-  };
-
   const handleAnswerClick = ({ target: { value, id } }) => {
     clearInterval(countdown);
     setLocalState((prevState) => ({
       ...prevState,
       hasClickedAnAnswer: true,
     }));
-    calculateScore(value, id);
+
+    return id === correctAnswer
+      ? setLocalState((prevState) => ({
+        ...prevState,
+        score: score + (DEZ + timer * value),
+        assertions: assertions + 1,
+      }))
+      : null;
   };
+
+  useEffect(() => {
+    dispatch(saveScore(score));
+    dispatch(saveAssertions(assertions));
+  }, [score, assertions]);
 
   useEffect(() => {
     generateRandomAnswers();
@@ -159,7 +172,6 @@ const Jogo = (props) => {
     fetchTrivia();
   }, []);
 
-  const MIL = 1000;
   useEffect(() => {
     setTimeout(countdown, MIL);
   }, [timer]);
