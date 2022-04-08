@@ -93,7 +93,7 @@ const Jogo = (props) => {
   };
 
   const generateRandomAnswers = () => {
-    const randomIndex = Math.floor(Math.random() * QUATRO);
+    const randomIndex = Math.floor(Math.random() * trivia.length - 1);
     console.log(`Random Index: ${randomIndex}`);
     const RANDOM_ANSWERS = [...incorrectAnswers];
     RANDOM_ANSWERS.splice(randomIndex, 0, correctAnswer);
