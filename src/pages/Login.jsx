@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import md5 from 'crypto-js/md5';
-import { saveEmail, saveToken, saveUser } from '../actions/index';
+import {
+  saveAssertions,
+  saveEmail,
+  saveScore,
+  saveToken,
+  saveUser,
+} from '../actions/index';
 
 const Login = (props) => {
   const [email, setEmail] = useState(null);
@@ -17,16 +23,17 @@ const Login = (props) => {
       : setBtnDisabled(true);
   };
 
-  const handleChange = ({ target: { value, name } }) => (
-    name === 'email'
-      ? (setEmail(value), validateInputs())
-      : (setUsername(value), validateInputs()));
+  const handleChange = ({ target: { value, name } }) => (name === 'email'
+    ? (setEmail(value), validateInputs())
+    : (setUsername(value), validateInputs()));
 
   const fetchToken = async () => {
     const response = await fetch('https://opentdb.com/api_token.php?command=request');
     const { token } = await response.json();
     localStorage.setItem('token', JSON.stringify(token));
     dispatch(saveToken(token));
+    dispatch(saveAssertions(0));
+    dispatch(saveScore(0));
   };
 
   const handleClick = async (e) => {
@@ -35,7 +42,10 @@ const Login = (props) => {
     const hashedEmail = md5(email).toString();
     dispatch(saveEmail(hashedEmail));
     dispatch(saveUser(username));
-    const { history: { push } } = props;
+
+    const {
+      history: { push },
+    } = props;
     push('/jogo');
   };
 

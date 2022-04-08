@@ -21,3 +21,7 @@ export const saveGravatar = (payload) => ({ type: SAVE_GRAVATAR, payload });
 export const SAVE_TRIVIA = 'SAVE_TRIVIA';
 
 export const saveTrivia = (payload) => ({ type: SAVE_TRIVIA, payload });
+
+export const SAVE_ASSERTIONS = 'SAVE_ASSERTIONS';
+
+export const saveAssertions = (payload) => ({ type: SAVE_ASSERTIONS, payload });
