@@ -30,6 +30,20 @@ const Feedback = (props) => {
         <h2 data-testid="feedback-text">
           {assertions < TRES ? 'Could be better...' : 'Well Done!'}
         </h2>
+        <h3>
+          Você acertou um total de
+          {' '}
+          <span data-testid="feedback-total-question">{assertions}</span>
+          {' '}
+          perguntas
+        </h3>
+        <h3>
+          E seu placar foi de
+          {' '}
+          <span data-testid="feedback-total-score">{score}</span>
+          {' '}
+          pontos
+        </h3>
         <div className="buttons">
           <button type="button" data-testid="btn-play-again" onClick={ () => push('/') }>
             Play Again
